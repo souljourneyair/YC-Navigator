@@ -1,6 +1,7 @@
 package com.yc.navigator.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.yc.navigator.BuildConfig
 import com.yc.navigator.R
@@ -54,6 +57,7 @@ fun SettingsScreen(
     updateInProgress: Boolean
 ) {
     var showImportConfirm by remember { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = Modifier
@@ -180,9 +184,49 @@ fun SettingsScreen(
                 text = stringResource(R.string.settings_author),
                 style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.settings_sponsors),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AboutLink("https://yourcrew.ru") {
+                runCatching { uriHandler.openUri("https://yourcrew.ru") }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.settings_official_site),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AboutLink("https://yourcrew.ru") {
+                runCatching { uriHandler.openUri("https://yourcrew.ru") }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.settings_email),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AboutLink("admin@yourcrew.ru") {
+                runCatching { uriHandler.openUri("mailto:admin@yourcrew.ru") }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.settings_github),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AboutLink("https://github.com/souljourneyair/YC-Navigator/") {
+                runCatching {
+                    uriHandler.openUri("https://github.com/souljourneyair/YC-Navigator/")
+                }
+            }
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.settings_vibe_coding),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.settings_local_only),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -214,12 +258,6 @@ fun SettingsScreen(
                     Text(stringResource(R.string.action_update))
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.settings_local_only),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
 
         Spacer(Modifier.height(96.dp))
@@ -245,4 +283,21 @@ fun SettingsScreen(
             }
         )
     }
+}
+
+@Composable
+private fun AboutLink(
+    text: String,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.primary,
+        textDecoration = TextDecoration.Underline,
+        modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 2.dp)
+    )
 }

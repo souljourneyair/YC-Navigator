@@ -5,6 +5,7 @@
     <string name="nav_journals">Журналы</string>
     <string name="nav_pilots">Пилоты</string>
     <string name="nav_documents">Документы</string>
+    <string name="nav_weather">Погода</string>
     <string name="nav_help">Справка</string>
     <string name="nav_settings">Настройки</string>
 
@@ -259,9 +260,13 @@
     <string name="update_permission">Разрешите установку приложений из этого источника</string>
     <string name="settings_local_only">Данные хранятся только на этом устройстве.</string>
     <string name="settings_language_note">Смена языка и единиц не изменяет значения журналов.</string>
-    <string name="settings_app_description">Электронный штурманский бортовой журнал. Офлайн-хранение, PDF-экспорт, профили пилотов.</string>
+    <string name="settings_app_description">Электронный штурманский бортовой журнал — YC-Navigator</string>
     <string name="settings_author">Автор идеи: Вадим Ташбаев</string>
-    <string name="settings_vibe_coding">Программа написана посредством вайб-кодинга с использованием ИИ DeepSeek</string>
+    <string name="settings_sponsors">Спонсоры: интернет-ресурс — авиаблог «Ваш экипаж»</string>
+    <string name="settings_official_site">Официальный сайт программы:</string>
+    <string name="settings_email">E-mail:</string>
+    <string name="settings_github">Программа на GitHub:</string>
+    <string name="settings_vibe_coding">Программа написана посредством вайб-кодинга с использованием ИИ DeepSeek, Claude Code</string>
 
     <string name="unit_m">м</string>
     <string name="unit_ft">фт</string>
@@ -317,6 +322,36 @@
     <string name="documents_no_folders">Папок пока нет</string>
     <string name="pdf_loading">Открываю документ…</string>
     <string name="pdf_open_error">Не удалось открыть PDF</string>
+
+    <string name="weather_reports">Сводки</string>
+    <string name="weather_code_label">Код %1$s</string>
+    <string name="weather_code_hint">Вставьте сюда код погоды</string>
+    <string name="weather_decoding">Расшифровка</string>
+    <string name="weather_decoding_empty">Вставьте код в поле выше — расшифровка появится здесь.</string>
+    <string name="weather_unrecognized">Стандартные группы кода не распознаны.</string>
+    <string name="weather_import">Импорт</string>
+    <string name="weather_export">Экспорт</string>
+    <string name="weather_txt">TXT</string>
+    <string name="weather_json">JSON</string>
+    <string name="weather_import_success">Данные импортированы</string>
+    <string name="weather_import_error">Не удалось импортировать файл</string>
+    <string name="weather_export_success">Файл сохранён</string>
+    <string name="weather_export_error">Не удалось сохранить файл</string>
+    <string name="weather_open_reports">Открыть сводки</string>
+    <string name="weather_type_metar_desc">Текущая погода и прогноз</string>
+    <string name="weather_type_gamet_desc">Зональный прогноз</string>
+    <string name="weather_type_sigmet_desc">Опасные явления</string>
+    <string name="weather_type_airmet_desc">Предупреждения</string>
+    <string name="weather_load_network">Загрузить из сети</string>
+    <string name="weather_load_title">Загрузка погоды</string>
+    <string name="weather_station">Аэродром (ICAO)</string>
+    <string name="weather_station_hint">Например, UUEE</string>
+    <string name="weather_load">Загрузить</string>
+    <string name="weather_loading">Загружаю…</string>
+    <string name="weather_load_success">Погода загружена</string>
+    <string name="weather_load_error">Не удалось загрузить погоду</string>
+    <string name="weather_load_empty">Нет данных для этого аэродрома</string>
+    <string name="weather_data_source">Источник данных: AviationWeather.gov</string>
     <string name="msg_wind_exceeds">Ветер сильнее воздушной скорости — проверьте данные</string>
     <string name="msg_validation">Заполните обязательные поля</string>
     <string name="msg_no_pilots">Сначала добавьте пилота в разделе «Пилоты»</string>

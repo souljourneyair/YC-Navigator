@@ -21,9 +21,12 @@ import com.yc.navigator.data.Pilot
 import com.yc.navigator.data.SettingsStore
 import com.yc.navigator.data.ThemeMode
 import com.yc.navigator.data.UnitMode
+import com.yc.navigator.data.WeatherReportType
+import com.yc.navigator.data.WeatherStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.time.LocalDate
 import java.util.UUID
@@ -34,8 +37,13 @@ class NavigatorViewModel(application: Application) : AndroidViewModel(applicatio
     private val documentsRepository = DocumentsRepository(application)
     private val settingsStore = SettingsStore(application)
     private val aircraftTypesStore = AircraftTypesStore(application)
+    private val weatherStore = WeatherStore(application)
     private val idGenerator = IdGenerator(application)
     private val saveDispatcher = Dispatchers.IO.limitedParallelism(1)
+    private val weatherJson = Json {
+        prettyPrint = true
+        encodeDefaults = true
+    }
 
     var journals by mutableStateOf(repository.loadJournals())
         private set
@@ -50,6 +58,9 @@ class NavigatorViewModel(application: Application) : AndroidViewModel(applicatio
         private set
 
     var aircraftTypes by mutableStateOf(aircraftTypesStore.load())
+        private set
+
+    var weatherReports by mutableStateOf(weatherStore.load())
         private set
 
     init {
@@ -231,6 +242,44 @@ class NavigatorViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun setWeatherReport(type: String, text: String) {
+        if (WeatherReportType.fromKey(type) == null) return
+        weatherReports = weatherReports + (type to text)
+        persistWeather()
+    }
+
+    fun importWeatherReports(raw: String): Boolean {
+        val parsed = runCatching {
+            weatherJson.decodeFromString<Map<String, String>>(raw)
+        }.getOrNull() ?: return false
+        val known = parsed.filterKeys { WeatherReportType.fromKey(it) != null }
+        val legacyCombined = listOf(
+            parsed[WeatherReportType.METAR_TAF.key],
+            parsed["METAR"],
+            parsed["TAF"]
+        ).filterNotNull()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString("\n")
+        val imported = if (legacyCombined.isNotBlank() && parsed["METAR/TAF"].isNullOrBlank()) {
+            known + (WeatherReportType.METAR_TAF.key to legacyCombined)
+        } else {
+            known
+        }
+        if (imported.isEmpty()) return false
+        weatherReports = weatherReports + imported
+        persistWeather()
+        return true
+    }
+
+    fun exportWeatherJson(): String {
+        val ordered = linkedMapOf<String, String>()
+        WeatherReportType.entries.forEach { type ->
+            ordered[type.key] = weatherReports[type.key].orEmpty()
+        }
+        return weatherJson.encodeToString(ordered)
+    }
+
     fun documentFile(nodeId: String): File? {
         val node = findDocumentNode(documentItems, nodeId) ?: return null
         if (node.isFolder) return null
@@ -343,6 +392,13 @@ class NavigatorViewModel(application: Application) : AndroidViewModel(applicatio
         val snapshot = documentItems
         viewModelScope.launch(saveDispatcher) {
             documentsRepository.save(snapshot)
+        }
+    }
+
+    private fun persistWeather() {
+        val snapshot = weatherReports
+        viewModelScope.launch(saveDispatcher) {
+            weatherStore.save(snapshot)
         }
     }
 

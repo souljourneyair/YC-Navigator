@@ -5,6 +5,7 @@
     <string name="nav_journals">Logs</string>
     <string name="nav_pilots">Pilots</string>
     <string name="nav_documents">Documents</string>
+    <string name="nav_weather">Weather</string>
     <string name="nav_help">Help</string>
     <string name="nav_settings">Settings</string>
 
@@ -259,9 +260,13 @@
     <string name="update_permission">Allow installing apps from this source</string>
     <string name="settings_local_only">Data is stored only on this device.</string>
     <string name="settings_language_note">Changing language and units does not alter log values.</string>
-    <string name="settings_app_description">Electronic flight navigation log. Offline storage, PDF export, pilot profiles.</string>
+    <string name="settings_app_description">Electronic flight navigation log — YC-Navigator</string>
     <string name="settings_author">Idea by: Vadim Tashbaev</string>
-    <string name="settings_vibe_coding">The app was built with vibe coding using DeepSeek AI</string>
+    <string name="settings_sponsors">Sponsors: aviation blog “Your Crew”</string>
+    <string name="settings_official_site">Official website:</string>
+    <string name="settings_email">E-mail:</string>
+    <string name="settings_github">Program on GitHub:</string>
+    <string name="settings_vibe_coding">The app was built with vibe coding using DeepSeek and Claude Code AI</string>
 
     <string name="unit_m">m</string>
     <string name="unit_ft">ft</string>
@@ -317,6 +322,36 @@
     <string name="documents_no_folders">No folders yet</string>
     <string name="pdf_loading">Opening document…</string>
     <string name="pdf_open_error">Could not open PDF</string>
+
+    <string name="weather_reports">Reports</string>
+    <string name="weather_code_label">%1$s code</string>
+    <string name="weather_code_hint">Paste the weather code here</string>
+    <string name="weather_decoding">Decoding</string>
+    <string name="weather_decoding_empty">Paste a code above — the decoding will appear here.</string>
+    <string name="weather_unrecognized">No standard code groups were recognized.</string>
+    <string name="weather_import">Import</string>
+    <string name="weather_export">Export</string>
+    <string name="weather_txt">TXT</string>
+    <string name="weather_json">JSON</string>
+    <string name="weather_import_success">Data imported</string>
+    <string name="weather_import_error">Could not import the file</string>
+    <string name="weather_export_success">File saved</string>
+    <string name="weather_export_error">Could not save the file</string>
+    <string name="weather_open_reports">Open reports</string>
+    <string name="weather_type_metar_desc">Current weather and forecast</string>
+    <string name="weather_type_gamet_desc">Area forecast</string>
+    <string name="weather_type_sigmet_desc">Significant weather</string>
+    <string name="weather_type_airmet_desc">Advisories</string>
+    <string name="weather_load_network">Load from network</string>
+    <string name="weather_load_title">Load weather</string>
+    <string name="weather_station">Aerodrome (ICAO)</string>
+    <string name="weather_station_hint">For example, UUEE</string>
+    <string name="weather_load">Load</string>
+    <string name="weather_loading">Loading…</string>
+    <string name="weather_load_success">Weather loaded</string>
+    <string name="weather_load_error">Could not load weather</string>
+    <string name="weather_load_empty">No data for this aerodrome</string>
+    <string name="weather_data_source">Data source: AviationWeather.gov</string>
     <string name="msg_wind_exceeds">Wind exceeds airspeed — check the data</string>
     <string name="msg_validation">Fill in the required fields</string>
     <string name="msg_no_pilots">Add a pilot in the Pilots section first</string>

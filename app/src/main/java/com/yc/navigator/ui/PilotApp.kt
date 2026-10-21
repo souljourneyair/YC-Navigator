@@ -40,6 +40,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yc.navigator.BuildConfig
@@ -56,6 +58,7 @@ import com.yc.navigator.ui.screens.HelpScreen
 import com.yc.navigator.ui.screens.JournalsScreen
 import com.yc.navigator.ui.screens.PilotsScreen
 import com.yc.navigator.ui.screens.SettingsScreen
+import com.yc.navigator.ui.screens.WeatherScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -189,6 +192,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
     }
 
     YCNavigatorTheme(darkTheme = darkTheme) {
+    val navLabelStyle = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp)
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHost) },
@@ -202,7 +206,15 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         previewJournalId = null
                     },
                     icon = { Icon(Icons.Filled.Home, contentDescription = null) },
-                    label = { Text(stringResource(R.string.nav_journals)) }
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_journals),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 )
                 NavigationBarItem(
                     selected = tab == 1,
@@ -212,7 +224,15 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         previewJournalId = null
                     },
                     icon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                    label = { Text(stringResource(R.string.nav_pilots)) }
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_pilots),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 )
                 NavigationBarItem(
                     selected = tab == 2,
@@ -227,7 +247,15 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                             contentDescription = null
                         )
                     },
-                    label = { Text(stringResource(R.string.nav_documents)) }
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_documents),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 )
                 NavigationBarItem(
                     selected = tab == 3,
@@ -236,8 +264,21 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         editingJournalId = null
                         previewJournalId = null
                     },
-                    icon = { Icon(Icons.Filled.Info, contentDescription = null) },
-                    label = { Text(stringResource(R.string.nav_help)) }
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_weather),
+                            contentDescription = null
+                        )
+                    },
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_weather),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 )
                 NavigationBarItem(
                     selected = tab == 4,
@@ -246,8 +287,34 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         editingJournalId = null
                         previewJournalId = null
                     },
+                    icon = { Icon(Icons.Filled.Info, contentDescription = null) },
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_help),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                )
+                NavigationBarItem(
+                    selected = tab == 5,
+                    onClick = {
+                        tab = 5
+                        editingJournalId = null
+                        previewJournalId = null
+                    },
                     icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                    label = { Text(stringResource(R.string.nav_settings)) }
+                    label = {
+                        Text(
+                            stringResource(R.string.nav_settings),
+                            style = navLabelStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 )
             }
         }
@@ -352,7 +419,16 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         onImportDocument = viewModel::importDocument
                     )
 
-                    3 -> HelpScreen()
+                    3 -> WeatherScreen(
+                        reports = viewModel.weatherReports,
+                        languageTag = languageTag,
+                        snackbarHost = snackbarHost,
+                        onReportChange = viewModel::setWeatherReport,
+                        onImportJson = viewModel::importWeatherReports,
+                        onExportJson = viewModel::exportWeatherJson
+                    )
+
+                    4 -> HelpScreen()
 
                     else -> SettingsScreen(
                         settings = settings,
