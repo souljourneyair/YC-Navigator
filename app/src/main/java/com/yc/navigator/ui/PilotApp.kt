@@ -42,7 +42,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yc.navigator.BuildConfig
 import com.yc.navigator.data.ThemeMode
+import com.yc.navigator.data.UpdateManager
 import com.yc.navigator.ui.theme.YCNavigatorTheme
 import com.yc.navigator.R
 import com.yc.navigator.export.ShareUtils
@@ -84,6 +86,12 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
     val exportActionTitle = stringResource(R.string.settings_export_all)
     val exportReadyMessage = stringResource(R.string.msg_export_ready)
     val exportErrorMessage = stringResource(R.string.msg_export_error)
+    val updateUpToDateMessage = stringResource(R.string.update_up_to_date)
+    val updateDownloadingMessage = stringResource(R.string.update_downloading)
+    val updateErrorMessage = stringResource(R.string.update_error)
+    val updatePermissionMessage = stringResource(R.string.update_permission)
+    val updateManager = remember { UpdateManager(context) }
+    var updateInProgress by remember { mutableStateOf(false) }
 
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -113,6 +121,35 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                 }
             }.onFailure {
                 snackbarHost.showSnackbar(importErrorMessage)
+            }
+        }
+    }
+
+    val checkForUpdates: () -> Unit = {
+        if (!updateInProgress) {
+            updateInProgress = true
+            scope.launch {
+                try {
+                    val info = updateManager.fetchLatest()
+                    if (info.versionCode <= BuildConfig.VERSION_CODE) {
+                        scope.launch { snackbarHost.showSnackbar(updateUpToDateMessage) }
+                    } else if (!updateManager.canInstallPackages()) {
+                        Toast.makeText(
+                            context,
+                            updatePermissionMessage,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        updateManager.openInstallPermissionSettings()
+                    } else {
+                        scope.launch { snackbarHost.showSnackbar(updateDownloadingMessage) }
+                        val file = updateManager.download(info)
+                        updateManager.install(file)
+                    }
+                } catch (_: Exception) {
+                    scope.launch { snackbarHost.showSnackbar(updateErrorMessage) }
+                } finally {
+                    updateInProgress = false
+                }
             }
         }
     }
@@ -351,7 +388,9 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         },
                         onImportData = {
                             importLauncher.launch(arrayOf("*/*"))
-                        }
+                        },
+                        onCheckForUpdates = checkForUpdates,
+                        updateInProgress = updateInProgress
                     )
                 }
             }

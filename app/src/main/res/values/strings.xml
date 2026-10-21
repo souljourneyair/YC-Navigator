@@ -251,6 +251,12 @@
     <string name="settings_import_confirm_text">Текущие журналы, пилоты и настройки будут заменены данными из выбранного файла.</string>
     <string name="settings_about">О приложении</string>
     <string name="settings_version">Версия %1$s</string>
+    <string name="action_update">Обновить</string>
+    <string name="update_in_progress">Обновление…</string>
+    <string name="update_up_to_date">Установлена последняя версия</string>
+    <string name="update_downloading">Скачиваю обновление…</string>
+    <string name="update_error">Не удалось проверить обновление</string>
+    <string name="update_permission">Разрешите установку приложений из этого источника</string>
     <string name="settings_local_only">Данные хранятся только на этом устройстве.</string>
     <string name="settings_language_note">Смена языка и единиц не изменяет значения журналов.</string>
     <string name="settings_app_description">Электронный штурманский бортовой журнал. Офлайн-хранение, PDF-экспорт, профили пилотов.</string>
