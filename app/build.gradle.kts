@@ -12,8 +12,8 @@ android {
         applicationId = "com.yc.navigator"
         minSdk = 28
         targetSdk = 37
-        versionCode = 4
-        versionName = "2.6"
+        versionCode = 5
+        versionName = "2.7"
     }
 
     buildTypes {
