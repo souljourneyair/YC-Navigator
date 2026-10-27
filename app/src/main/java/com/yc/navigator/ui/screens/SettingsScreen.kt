@@ -19,11 +19,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -54,7 +56,8 @@ fun SettingsScreen(
     onExportData: () -> Unit,
     onImportData: () -> Unit,
     onCheckForUpdates: () -> Unit,
-    updateInProgress: Boolean
+    updateInProgress: Boolean,
+    onBack: (() -> Unit)? = null
 ) {
     var showImportConfirm by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
@@ -63,22 +66,43 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
     ) {
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = "YC NAVIGATOR",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = stringResource(R.string.settings_title),
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            if (onBack != null) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.action_back)
+                    )
+                }
+            }
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = "YC NAVIGATOR",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.settings_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
 
-        Spacer(Modifier.height(18.dp))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(Modifier.height(6.dp))
 
         SectionCard(title = stringResource(R.string.settings_language)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -260,7 +284,8 @@ fun SettingsScreen(
             }
         }
 
-        Spacer(Modifier.height(96.dp))
+            Spacer(Modifier.height(96.dp))
+        }
     }
 
     if (showImportConfirm) {

@@ -1,4 +1,4 @@
-package com.yc.navigator.ui
+﻿package com.yc.navigator.ui
 
 import android.app.Activity
 import android.content.Context
@@ -12,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -53,9 +52,12 @@ import com.yc.navigator.export.ShareUtils
 import com.yc.navigator.pdf.JournalPdfGenerator
 import com.yc.navigator.ui.editor.JournalEditorScreen
 import com.yc.navigator.ui.preview.PdfPreviewScreen
+import com.yc.navigator.ui.screens.CenteringScreen
+import com.yc.navigator.ui.screens.ConversionsScreen
 import com.yc.navigator.ui.screens.DocumentsScreen
 import com.yc.navigator.ui.screens.HelpScreen
 import com.yc.navigator.ui.screens.JournalsScreen
+import com.yc.navigator.ui.screens.MenuScreen
 import com.yc.navigator.ui.screens.PilotsScreen
 import com.yc.navigator.ui.screens.SettingsScreen
 import com.yc.navigator.ui.screens.WeatherScreen
@@ -166,6 +168,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
     }
 
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    var menuPage by rememberSaveable { mutableStateOf("menu") }
     var editingJournalId by rememberSaveable { mutableStateOf<Long?>(null) }
     val editingJournal = editingJournalId?.let(viewModel::journalById)
     var previewJournalId by rememberSaveable { mutableStateOf<Long?>(null) }
@@ -191,8 +194,16 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
         }
     }
 
+    BackHandler(enabled = tab == 4 && menuPage != "menu") {
+        menuPage = "menu"
+    }
+
+    LaunchedEffect(tab) {
+        if (tab > 4) tab = 4
+    }
+
     YCNavigatorTheme(darkTheme = darkTheme) {
-    val navLabelStyle = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp)
+    val navLabelStyle = MaterialTheme.typography.labelMedium.copy(fontSize = 11.sp)
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHost) },
@@ -202,6 +213,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                     selected = tab == 0,
                     onClick = {
                         tab = 0
+                        menuPage = "menu"
                         editingJournalId = null
                         previewJournalId = null
                     },
@@ -220,6 +232,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                     selected = tab == 1,
                     onClick = {
                         tab = 1
+                        menuPage = "menu"
                         editingJournalId = null
                         previewJournalId = null
                     },
@@ -238,6 +251,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                     selected = tab == 2,
                     onClick = {
                         tab = 2
+                        menuPage = "menu"
                         editingJournalId = null
                         previewJournalId = null
                     },
@@ -261,6 +275,7 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                     selected = tab == 3,
                     onClick = {
                         tab = 3
+                        menuPage = "menu"
                         editingJournalId = null
                         previewJournalId = null
                     },
@@ -284,31 +299,14 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                     selected = tab == 4,
                     onClick = {
                         tab = 4
+                        menuPage = "menu"
                         editingJournalId = null
                         previewJournalId = null
                     },
-                    icon = { Icon(Icons.Filled.Info, contentDescription = null) },
+                    icon = { Icon(Icons.Filled.Menu, contentDescription = null) },
                     label = {
                         Text(
-                            stringResource(R.string.nav_help),
-                            style = navLabelStyle,
-                            maxLines = 1,
-                            softWrap = false,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    selected = tab == 5,
-                    onClick = {
-                        tab = 5
-                        editingJournalId = null
-                        previewJournalId = null
-                    },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                    label = {
-                        Text(
-                            stringResource(R.string.nav_settings),
+                            stringResource(R.string.nav_menu),
                             style = navLabelStyle,
                             maxLines = 1,
                             softWrap = false,
@@ -428,46 +426,66 @@ fun PilotApp(viewModel: NavigatorViewModel = viewModel()) {
                         onExportJson = viewModel::exportWeatherJson
                     )
 
-                    4 -> HelpScreen()
+                    else -> when (menuPage) {
+                        "conversions" -> ConversionsScreen(
+                            languageTag = languageTag,
+                            onBack = { menuPage = "menu" }
+                        )
 
-                    else -> SettingsScreen(
-                        settings = settings,
-                        onLanguageChange = { tag ->
-                            viewModel.setLanguage(tag)
-                            context.findActivity()?.recreate()
-                        },
-                        onThemeModeChange = viewModel::setThemeMode,
-                        onUnitModeChange = viewModel::setUnitMode,
-                        onExportData = {
-                            scope.launch {
-                                runCatching {
-                                    val json = viewModel.exportJson()
-                                    val file = withContext(Dispatchers.IO) {
-                                        val output = ShareUtils.sharedFile(
+                        "centering" -> CenteringScreen(
+                            languageTag = languageTag,
+                            onBack = { menuPage = "menu" }
+                        )
+
+                        "help" -> HelpScreen(onBack = { menuPage = "menu" })
+
+                        "settings" -> SettingsScreen(
+                            settings = settings,
+                            onLanguageChange = { tag ->
+                                viewModel.setLanguage(tag)
+                                context.findActivity()?.recreate()
+                            },
+                            onThemeModeChange = viewModel::setThemeMode,
+                            onUnitModeChange = viewModel::setUnitMode,
+                            onExportData = {
+                                scope.launch {
+                                    runCatching {
+                                        val json = viewModel.exportJson()
+                                        val file = withContext(Dispatchers.IO) {
+                                            val output = ShareUtils.sharedFile(
+                                                context,
+                                                "YC-navigator_data.json"
+                                            )
+                                            output.writeText(json, Charsets.UTF_8)
+                                            output
+                                        }
+                                        ShareUtils.shareFile(
                                             context,
-                                            "YC-navigator_data.json"
+                                            file,
+                                            "application/json",
+                                            exportActionTitle
                                         )
-                                        output.writeText(json, Charsets.UTF_8)
-                                        output
+                                        snackbarHost.showSnackbar(exportReadyMessage)
+                                    }.onFailure {
+                                        snackbarHost.showSnackbar(exportErrorMessage)
                                     }
-                                    ShareUtils.shareFile(
-                                        context,
-                                        file,
-                                        "application/json",
-                                        exportActionTitle
-                                    )
-                                    snackbarHost.showSnackbar(exportReadyMessage)
-                                }.onFailure {
-                                    snackbarHost.showSnackbar(exportErrorMessage)
                                 }
-                            }
-                        },
-                        onImportData = {
-                            importLauncher.launch(arrayOf("*/*"))
-                        },
-                        onCheckForUpdates = checkForUpdates,
-                        updateInProgress = updateInProgress
-                    )
+                            },
+                            onImportData = {
+                                importLauncher.launch(arrayOf("*/*"))
+                            },
+                            onCheckForUpdates = checkForUpdates,
+                            updateInProgress = updateInProgress,
+                            onBack = { menuPage = "menu" }
+                        )
+
+                        else -> MenuScreen(
+                            onConversions = { menuPage = "conversions" },
+                            onCentering = { menuPage = "centering" },
+                            onHelp = { menuPage = "help" },
+                            onSettings = { menuPage = "settings" }
+                        )
+                    }
                 }
             }
         }
